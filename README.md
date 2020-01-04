@@ -66,3 +66,6 @@ This'll render your Scene and preview it in your default player (in 'l'ow qualit
 Congrats! You've written and played your first animation (or "chanimation" should I say)
 
 Explore the code and docs (not written yet) for more on how to use chanim.
+
+## Abilities
+Currently chanim only supports drawing compounds and reactions along with a few chemfig commands but more is to come! If you have a suggestion, file an issue with a proper tag.
