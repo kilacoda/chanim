@@ -69,3 +69,6 @@ Explore the code and docs (not written yet) for more on how to use chanim.
 
 ## Abilities
 Currently chanim only supports drawing compounds and reactions along with a few chemfig commands but more is to come! If you have a suggestion, file an issue with a proper tag.
+
+## A Quick Note
+There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
