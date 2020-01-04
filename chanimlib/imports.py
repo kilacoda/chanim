@@ -1,0 +1,9 @@
+"""
+Similar to how Grant with manim, this is to make importing stuff easier
+while making videos. This is also kind of a nice dumping ground for any 
+future developments I make to chanim. Feel free to propose a better way 
+to manage imports.
+"""
+
+from chanimlib.chem_objects import *
+from chanimlib.compounds import *
