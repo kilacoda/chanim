@@ -1,4 +1,4 @@
-from chanimlib.mobject.svg.tex_mobject import ChemObject
+from .chem_objects import ChemObject
 
 """
 Lazy Classes to create useful organic compounds.
@@ -55,15 +55,15 @@ so can be called directly, without having to write the long chemfig code
 again and again. Saves time, really.
 """
 
-methyl = "H[4]-C(-H[2])(-H[6])"
+methyl = "[4]H-C(-[2]H)(-[6]H)"
 
-methylene = "-C(-H[2])(-H[6])"
+methylene = "-C(-[2]H)(-[6]H)"
 
-methine = "-C(-H[2])"
+methine = "-C(-[2]H)"
 
 Phenol = "*6(-=-=(-OH)-=)"
 
-Water = "H[5]-\lewis{1:2:,O}-H[-1]"
+Water = "[5]H-\lewis{1:2:,O}-H[-1]"
 
 Ethanol = PrimaryAlcohol(2)
 
@@ -76,7 +76,7 @@ Benzene_Diazonium_Chloride = BDC = "*6(-=-=(-\\chemabove{N_2}{\quad\scriptstyle+
 
 Aniline ="*6(-=-=(-NH2)-=-)"
 
-Carbon_Dioxide = CO2 = "O[4]=C=O"
+Carbon_Dioxide = CO2 = "[4]O=C=O"
 
 
 

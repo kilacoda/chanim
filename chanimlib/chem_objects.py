@@ -1,7 +1,8 @@
-from manimlib.imports import *
-
+from manimlib.mobject.svg.tex_mobject import *
+from typing import List,Tuple
 ## TODO: Add options for reaction mechanisms, like a Reaction Mobject or something
 #        Keep params like *reactants,*products,arrow_type,arrow_text
+
 
 
 class ChemObject(TexMobject):
@@ -178,3 +179,8 @@ class ChemWithName(TexMobject):
             chem_with_name)
 
         TexMobject.__init__(self,)
+
+
+Formula = ChemObject
+CArrow = ChemArrow
+React = Reaction
