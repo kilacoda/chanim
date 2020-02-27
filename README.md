@@ -54,7 +54,7 @@ class MoleculeOrReaction(Scene):
     self.play(Write(<name>))
 ```
 
-Type this into a python (`.py`) file. I'll assume you named it `chem.py`
+Type this into a python (`.py`) file (changing what's necessary). I'll assume you named it `chem.py`
 
 In your command prompt/terminal write this (assuming you're in your project directory):
 
