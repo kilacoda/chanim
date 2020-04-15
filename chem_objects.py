@@ -6,9 +6,9 @@ from manimlib.animation.creation import Write
 from manimlib.animation.composition import AnimationGroup
 from manimlib.mobject.geometry import DashedLine
 from manimlib.constants import *
+from manimlib.utils.config_ops import digest_locals
 
-
-def check_ifinstance_change_if_not(obj, instance_of):
+def check_if_instance_change_if_not(obj, instance_of):
     if not isinstance(obj, instance_of):
         obj = instance_of(obj)
 
@@ -89,7 +89,7 @@ class ComplexChemCompound(TexMobject):
 
         TexMobject.__init__(self,cation,anion,**kwargs)
 
-
+## IT'S BWOKEN!! *sob*
 class Reaction(TexMobject):
     '''
     `chanimlib.chem_objects.Reaction`
@@ -163,8 +163,12 @@ class Reaction(TexMobject):
         self.arrow_align_params = arrow_align_params
 
         self.equation = self.get_equation()
-        # print(repr(equation))
+        print(repr(self.equation))
+        
+
         TexMobject.__init__(self, *self.equation)
+
+        print(self.tex_strings[-1])
 
     def get_equation(self):
         if self.arrow_align_params != "":
@@ -179,6 +183,10 @@ class Reaction(TexMobject):
                 self.arrow_text_up,
                 self.arrow_text_down)
 
+        # ## To prevent manim from writing the arrow to a separate file.
+        # self.excluded_strings.append(arrow)
+        print(self.excluded_strings)
+        print()
         r = ["\\chemfig{" + R + "}"
              if R != self.reactants[-1] and len(self.reactants) != 1
              else "\\chemfig{"+R+"}"
@@ -201,15 +209,23 @@ class Reaction(TexMobject):
         """
         No pun intended.
         """
-        
+
         n = len(iterable)
+        accumulator = 0
+
         if n % 2 == 0:
-            for i in range(1, len(iterable), 2):
-                iterable.insert(i, obj)
-                # print(iterable)
+            indexes_to_insert_at = range(1, n, 2)
+            for i in indexes_to_insert_at:
+                iterable.insert(i+accumulator, obj)
+                print(iterable)
+                accumulator += 1
+            # iterable.insert(-1, obj)
         elif n % 2 != 0 and n != 1:
-            for i in range(1, n+1, 2):
-                iterable.insert(i, obj)
+            indexes_to_insert_at = range(1, n+1, 2)
+            for i in indexes_to_insert_at:
+                iterable.insert(i+accumulator, obj)
+                print(iterable)
+                accumulator += 1
                 # print(iterable)
 
     def get_breakdown_dict(self):
