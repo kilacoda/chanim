@@ -7,6 +7,7 @@ from manimlib.animation.composition import AnimationGroup
 from manimlib.mobject.geometry import DashedLine
 from manimlib.constants import *
 from manimlib.utils.config_ops import digest_locals
+from manimlib.mobject.geometry import SmallDot
 
 def check_if_instance_change_if_not(obj, instance_of):
     if not isinstance(obj, instance_of):
@@ -90,6 +91,7 @@ class ComplexChemCompound(TexMobject):
         TexMobject.__init__(self,cation,anion,**kwargs)
 
 ## IT'S BWOKEN!! *sob*
+## UPDATE 21/04/20: This... works again for some reason?
 class Reaction(TexMobject):
     '''
     `chanimlib.chem_objects.Reaction`
@@ -109,6 +111,25 @@ class Reaction(TexMobject):
     use chemfig strings instead of ChemObjects, which basically renders them useless,\\
     while creating additional problems while indexing the atoms.
 
+
+    Arrow types:
+    ============
+
+    "forward": "->",
+
+    "backward": "<-",
+    
+    "eq": "<=>",
+    
+    "eq_fw": "<->>",
+    
+    "eq_bw": "<<->",
+    
+    "double": "<->",
+    
+    "space": "0",
+    
+    "split": "-U"
     '''
     CONFIG = {
         "stroke_width": 2,
@@ -214,16 +235,18 @@ class Reaction(TexMobject):
         accumulator = 0
 
         if n % 2 == 0:
-            indexes_to_insert_at = range(1, n, 2)
-            for i in indexes_to_insert_at:
-                iterable.insert(i+accumulator, obj)
+            indexes_to_insert_at = range(n-1,0,-1)
+            print(list(indexes_to_insert_at))
+            for i in (indexes_to_insert_at):
+                iterable.insert(i, obj)
                 print(iterable)
                 accumulator += 1
             # iterable.insert(-1, obj)
         elif n % 2 != 0 and n != 1:
-            indexes_to_insert_at = range(1, n+1, 2)
+            indexes_to_insert_at = [1,*range(n-1,0,-1)] if n != 3 else (2,1)
+            print(list(indexes_to_insert_at))
             for i in indexes_to_insert_at:
-                iterable.insert(i+accumulator, obj)
+                iterable.insert(i, obj)
                 print(iterable)
                 accumulator += 1
                 # print(iterable)
@@ -440,6 +463,20 @@ class BondBreak(DashedLine):
         end = start + self.length*UP
 
         DashedLine.__init__(self,start=start,end=end)
+
+class ElectronPair(VGroup):
+    """Electron Pair: Two electrons (SmallDots) in a VGroup
+
+    Arguments:
+        None -- Just use this as it is and change the CONFIG stuff if you want
+    """
+    CONFIG = dict(
+        color=YELLOW,
+        pair_buff=0.15
+    )
+    def __init__(self, **kwargs):
+        super().__init__(SmallDot(),SmallDot(), **kwargs)
+        self.arrange(RIGHT,buff=self.pair_buff).set_color(self.color)
 
 
 Formula = ChemObject
