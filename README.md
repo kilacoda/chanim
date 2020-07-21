@@ -72,3 +72,5 @@ Currently chanim only supports drawing compounds and reactions along with a few 
 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
+
+Also, at the moment chanim won't work with the [community version of manim](https://github.com/ManimCommunity/manim) due to the changes in how the TeX templates are used and modified, which I haven't really figured out how to incorporate with chanim. It may become an addon at some point, but not anytime in the near future unfortunately. Thus consider using the 3b1b/manim version instead.
