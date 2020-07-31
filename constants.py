@@ -66,6 +66,13 @@ with open(TEMPLATE_TEX_FILE, "r") as infile:
         "\\begin{align*}\n" +"\\setchemfig{atom sep=2em}\n"+"\\schemestart\n"+
         TEX_TEXT_TO_REPLACE +"\n\\schemestop"+"\n\\end{align*}" 
     )
+    
+    TEMPLATE_CHEMNAME_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
+        TEX_TEXT_TO_REPLACE,
+        "\\begin{align*}\n" + "\\setchemfig{atom sep = 2em}\n" +
+        TEX_TEXT_TO_REPLACE+ "\n\\end{align*}",
+    )
+
     TEMPLATE_TEX_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
         TEX_TEXT_TO_REPLACE,
         "\\begin{align*}\n" + TEX_TEXT_TO_REPLACE + "\n\\end{align*}",
