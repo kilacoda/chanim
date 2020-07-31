@@ -195,9 +195,8 @@ class Reaction(TexMobject):
 
         ##Convenience aliases.
         self.arrow = self[2 * len(self.reactants) - 1]
-        self.reactants = self[:2 * len(self.reactants) - 1]
-        self.products = self[2 * len(self.reactants):]
-        # print(self.tex_strings[-1])
+        self.reactants = self[:2 * len(self.reactants) - 1:2]
+        self.products = self[2 * len(self.reactants)::2]
 
     def get_equation(self):
         if self.arrow_align_params != "":
