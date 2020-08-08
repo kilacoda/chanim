@@ -46,15 +46,14 @@ That's about it.
 
 ## Usage
 ```py
-from manimlib.imports import *
-from chanimlib.imports import *
+from chanim.imports import *
 
 class MoleculeOrReaction(Scene):
     <name> = ChemObject(<chemfig code>)
     self.play(Write(<name>))
 ```
 
-Type this into a python (`.py`) file (changing what's necessary). I'll assume you named it `chem.py`
+Type this into a python (`.py`) file (changing whatever's necessary, i.e. stuff inside the angle brackets). I'll assume you named it `chem.py`
 
 In your command prompt/terminal write this (assuming you're in your project directory):
 
@@ -68,7 +67,7 @@ Congrats! You've written and played your first animation (or "chanimation" shoul
 Explore the code and docs (not written yet) for more on how to use chanim.
 
 ## Abilities
-Currently chanim only supports drawing compounds and reactions along with a few chemfig commands but more is to come! If you have a suggestion, file an issue with a proper tag.
+Currently chanim only supports drawing compounds and reactions along with a few chemfig commands (such as coordinate bonds and complexes etc.) but more is to come! If you have a suggestion, file an issue with a proper tag.
 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
