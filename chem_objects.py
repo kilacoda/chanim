@@ -1,14 +1,17 @@
-from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
-from manimlib.mobject.svg.tex_mobject import *
+from numpy.lib.utils import deprecate
+from chanim.templates import ChemReactionTemplate, ChemTemplate
+from manim.mobject.types.vectorized_mobject import VGroup, VMobject
+from manim.mobject.svg.tex_mobject import *
 from typing import List, Tuple, Union
-from manimlib.animation.fading import FadeInFromDown
-from manimlib.animation.animation import Animation
-from manimlib.animation.creation import Write
-from manimlib.animation.composition import AnimationGroup
-from manimlib.mobject.geometry import DashedLine
-from manimlib.constants import *
-from manimlib.utils.config_ops import digest_locals
-from manimlib.mobject.geometry import SmallDot
+from manim.animation.fading import FadeInFromDown
+from manim.animation.animation import Animation
+from manim.animation.creation import Write
+from manim.animation.composition import AnimationGroup
+from manim.mobject.geometry import DashedLine
+from manim.constants import *
+from manim.utils.config_ops import digest_config
+from manim.mobject.geometry import SmallDot
+from manim.config import config
 
 
 def check_if_instance_change_if_not(obj, instance_of):
@@ -16,7 +19,7 @@ def check_if_instance_change_if_not(obj, instance_of):
         obj = instance_of(obj)
 
 
-class ChemObject(TexMobject):
+class ChemObject(MathTex):
     """
     `chanimlib.chem_objects.ChemObject`
 
@@ -31,16 +34,49 @@ class ChemObject(TexMobject):
     or
 
     >>> water = ChemObject("H[5]-O-H[-1]")      ## After repulsion
+
+    You can also set various prperties of the molecule using keyword arguments. See
+    `__init__` and page 7 of the manual (http://ctan.imsc.res.in/macros/generic/chemfig/chemfig-en.pdf)
     """
 
-    CONFIG = {"stroke_width": 2, "template_tex_file_body": TEMPLATE_CHEM_FILE_BODY}
+    CONFIG = {"stroke_width": 2}
+
+    def __init__(
+        self,
+        chem_code: str,
+        atom_sep: str = "2em",  ## all of these are the defaults in chemfig
+        chemfig_style="",
+        atom_style="",
+        angle_increment=45,
+        bond_offset="2pt",
+        double_bond_sep="2pt",
+        node_style="",
+        bond_style="",
+        **kwargs,
+    ):
+        old_tex_template = config["tex_template"]
+
+        config["tex_template"] = ChemTemplate()
+        config["tex_template"].set_chemfig(
+            atom_sep,
+            chemfig_style,
+            atom_style,
+            angle_increment,
+            bond_offset,
+            double_bond_sep,
+            node_style,
+            bond_style,
+        )
+        super().__init__("\\chemfig{%s}" % chem_code)
+
+        config["tex_template"] = old_tex_template
 
     def set_ion_position(
         self, string_number=0, e_index=0, final_atom_index=1, direction=LEFT
     ):
         """
         This is to facilitate shifting of ionic and lewis electrons,
-        by '.move_to''ing them to the direction you provide.
+        by `.move_to`'ing them to the direction you provide.
         """
 
         self[string_number][e_index].move_to(
@@ -48,7 +84,7 @@ class ChemObject(TexMobject):
         )
 
 
-class ComplexChemIon(TexMobject):
+class ComplexChemIon(MathTex):
     """
     Mono-ionic Complexes
     """
@@ -60,10 +96,10 @@ class ComplexChemIon(TexMobject):
         self.comp = (
             "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % self.charge
         )
-        TexMobject.__init__(self, self.comp, **kwargs)
+        MathTex.__init__(self, self.comp, **kwargs)
 
 
-class ComplexChemCompound(TexMobject):
+class ComplexChemCompound(MathTex):
     """
     Di-ionic Complexes
     """
@@ -87,13 +123,13 @@ class ComplexChemCompound(TexMobject):
         elif isinstance(anion, ChemObject):
             anion = anion.tex_strings[0]
 
-        TexMobject.__init__(self, cation, anion, **kwargs)
+        MathTex.__init__(self, cation, anion, **kwargs)
 
 
 ## IT'S BWOKEN!! *sob*
 ## UPDATE 21/04/20: This... works again for some reason?
 ## UPDATE 07/05/20: Use Something like FadeIn for this instead of Write; because Write is fokken broken.
-class Reaction(TexMobject):
+class Reaction(MathTex):
     """
     `chanimlib.chem_objects.Reaction`
     Reaction
@@ -106,7 +142,7 @@ class Reaction(TexMobject):
     Trust me, this gave me a headache for a while.
 
     TODO: Fix this entire thing. It's fucking messed up. Also, check what happens \\
-    when you change the [index] element and if it works like a TexMobject.
+    when you change the [index] element and if it works like a MathTex.
 
     I also kind of hate the current implementation of this because it forces one to\\
     use chemfig strings instead of ChemObjects, which basically renders them useless,\\
@@ -119,25 +155,25 @@ class Reaction(TexMobject):
     "forward": "->",
 
     "backward": "<-",
-    
+
     "eq": "<=>",
-    
+
     "eq_fw": "<->>",
-    
+
     "eq_bw": "<<->",
-    
+
     "double": "<->",
-    
+
     "space": "0",
-    
+
     "split": "-U"
     """
 
     CONFIG = {
         "stroke_width": 2,
         # "use_hbox":false,
-        "template_tex_file_body": TEMPLATE_CHEM_REACTION_FILE_BODY,
         "excluded_strings": ["\\+"],
+        "alignment": ""
     }
 
     arrows = {
@@ -163,21 +199,41 @@ class Reaction(TexMobject):
         arrow_text_down="",
         arrow_align_params="",
         debug="false",
-        use_hbox=False,
+        # use_hbox=False, idk why this is here, probably not needed now
+        ## styling params from ChemObject, just keeping them here in case anyone wants to get funky with their molecule designs.
+        atom_sep: str = "2em",  ## all of these are the defaults in chemfig
+        chemfig_style="",
+        atom_style="",
+        angle_increment=45,
+        bond_offset="2pt",
+        double_bond_sep="2pt",
+        node_style="",
+        bond_style="",
         **kwargs,
     ):
 
         digest_config(self, kwargs)
 
-        if use_hbox:
-            self.template_tex_file_body = TEMPLATE_CHEM_REACTION_FILE_BODY_WITH_HBOX
+        # old code
+        # if use_hbox:
+        #     self.template_tex_file_body = TEMPLATE_CHEM_REACTION_FILE_BODY_WITH_HBOX
+        old_tex_template = config["tex_template"]
 
-        set_chemfig = (
-            "\\setchemfig{scheme debug=%s, atom sep=2em, arrow angle={%d}, arrow coeff={%s}, arrow style={%s}}"
-            % (debug, arrow_angle, arrow_length, arrow_style)
-        )
-        self.template_tex_file_body = self.template_tex_file_body.replace(
-            "\\setchemfig{atom sep=2em}", f"{set_chemfig}"
+        config["tex_template"] = ChemReactionTemplate()
+        config["tex_template"].set_chemfig(
+            atom_sep,
+            chemfig_style,
+            atom_style,
+            angle_increment,
+            bond_offset,
+            double_bond_sep,
+            node_style,
+            bond_style,
+            arrow_type,
+            arrow_length,
+            arrow_angle,
+            arrow_style,
+            debug,
         )
 
         self.reactants = reactants
@@ -191,12 +247,14 @@ class Reaction(TexMobject):
         self.equation = self.get_equation()
         print(repr(self.equation))
 
-        TexMobject.__init__(self, *self.equation)
+        super().__init__(*self.equation)
+
+        config["tex_template"] = old_tex_template
 
         ##Convenience aliases.
         self.arrow = self[2 * len(self.reactants) - 1]
-        self.reactants = self[:2 * len(self.reactants) - 1:2]
-        self.products = self[2 * len(self.reactants)::2]
+        self.reactants = self[: 2 * len(self.reactants) - 1 : 2]
+        self.products = self[2 * len(self.reactants) :: 2]
 
     def get_equation(self):
         if self.arrow_align_params != "":
@@ -264,6 +322,7 @@ class Reaction(TexMobject):
                 accumulator += 1
                 # print(iterable)
 
+    # I think this was intended to give a dict or something of all reactants and products. IDK
     def get_breakdown_dict(self):
         pass
 
@@ -297,13 +356,9 @@ class Reaction(TexMobject):
             kwargs["group_kwargs"] = dict()
 
         print(kwargs["group_kwargs"])
-        
-        anim_group = AnimationGroup(
-            text_anim(text),
-            arrow_anim(arrow),
-            **kwargs
-        )
-        
+
+        anim_group = AnimationGroup(text_anim(text), arrow_anim(arrow), **kwargs)
+
         try:
             print(anim_group.run_time)
         except Exception:
@@ -311,7 +366,7 @@ class Reaction(TexMobject):
         return anim_group
 
 
-class ChemArrow(TexMobject):
+class ChemArrow(MathTex):
     """
     `chanimlib.chem_objects.ChemArrow`
     Chemical Reaction Arrow
@@ -323,7 +378,6 @@ class ChemArrow(TexMobject):
 
     CONFIG = {
         "stroke_width": 2,
-        "template_tex_file_body": TEMPLATE_CHEM_REACTION_FILE_BODY,
     }
 
     arrows = {
@@ -361,21 +415,21 @@ class ChemArrow(TexMobject):
         )
 
         arrow = "\\arrow{%s[%s][%s]}" % (self.arrows[_type], text_up, text_down)
-        TexMobject.__init__(self, arrow)
+        MathTex.__init__(self, arrow)
 
 
-class ChemName(TexMobject):
-
-    """
-    `chanimlib.chem_objects.ChemName`
+class ChemName(MathTex):
+    """`chanimlib.chem_objects.ChemName`
 
     An attempt to use chemfig's \\chemname{} macro.
 
     This will only be written in one go, so if you'd like
     animations for both parts see `ChemWithName`.
+
+    NOTE: To be deprecated. Use `ChemWithName` instead
     """
 
-    CONFIG = {"template_tex_file_body": TEMPLATE_CHEMNAME_FILE_BODY, "stroke_width": 2}
+    CONFIG = {"stroke_width": 2}
 
     def __init__(self, chem, name, buff=1, **kwargs):
         digest_config(self, kwargs)
@@ -385,7 +439,7 @@ class ChemName(TexMobject):
         #     "\\chemfig{",
         #     chem_with_name)
 
-        TexMobject.__init__(self, chem_with_name)
+        MathTex.__init__(self, chem_with_name)
 
 
 class ChemWithName(VMobject):
@@ -401,6 +455,9 @@ class ChemWithName(VMobject):
     ```py
     ChemWithName.creation_anim(chem_anim,name_anim)
     ```
+
+
+    inspired by `BraceLabel`
     """
 
     CONFIG = {"label_constructor": TextMobject, "buff": 1}
@@ -437,8 +494,6 @@ class ChemAbove(ChemObject):
 
 
 # Doesn't work, somebody fix this or I'll say it's deprecated.
-
-
 class ReactionVGroup(VGroup):
     CONFIG = {
         "_type": "forward",
@@ -476,7 +531,7 @@ class ReactionVGroup(VGroup):
 
     def get_side_of_equation(self, iterableable):
         # A = [
-        #     *(Participant, TexMobject("+")) if Participant != iterableable[-1]
+        #     *(Participant, MathTex("+")) if Participant != iterableable[-1]
         #     else Participant
         #     for Participant in iterableable
         # ]
@@ -484,7 +539,7 @@ class ReactionVGroup(VGroup):
         A = []
         for Part in iterableable:
             if Part != iterableable[-1]:
-                A.extend([ChemObject(Part), TexMobject("+")])
+                A.extend([ChemObject(Part), MathTex("+")])
             else:
                 A.append(ChemObject(Part))
         return A
