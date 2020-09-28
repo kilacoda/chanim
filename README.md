@@ -1,52 +1,16 @@
 # Chanim
-This is an extension to 3BlueBrown's [Manim](https://www.github.com/3b1b/manim) library,
+This is an extension to 3BlueBrown's [Manim](https://www.github.com/ManimCommunity/manim) library,
 for making videos regarding chemistry.
 
 ## Installation
-1. Get manim from the above link or `pip install manimlib`. You'll have to download other 
-required modules as explained at the manim page.
+1. Get manim as described [here](https://manimce.readthedocs.io/en/latest/installation.html) according to your OS,  or `pip install manimce` (will be `pip install manim` [soon](https://github.com/pypa/pypi-support/issues/450)). You'll have to download other required modules as explained at the manim page.
 2. Clone the contents of this repository to where you'll keep your animation projects.
-3. Replace the `constants.py` file in your installed manim location with the one provided here
-or just replace this:
-```py
-with open(TEMPLATE_TEX_FILE, "r") as infile:
-    TEMPLATE_TEXT_FILE_BODY = infile.read()
-
-    TEMPLATE_TEX_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
-        TEX_TEXT_TO_REPLACE,
-        "\\begin{align*}\n" + TEX_TEXT_TO_REPLACE + "\n\\end{align*}",
-    )
-```
-with this:
-```py
-with open(TEMPLATE_TEX_FILE, "r") as infile:
-    TEMPLATE_TEXT_FILE_BODY = infile.read()
-    
-    TEMPLATE_CHEM_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
-        TEX_TEXT_TO_REPLACE,
-        "\\begin{align*}\n" + "\\setchemfig{atom sep = 2em}\n\\chemfig{" +
-        TEX_TEXT_TO_REPLACE+"}" + "\n\\end{align*}",
-    )
-    TEMPLATE_CHEM_REACTION_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
-        TEX_TEXT_TO_REPLACE,
-        "\\begin{align*}\n" +"\\setchemfig{atom sep=2em}\n"+"\\schemestart\n"+
-        TEX_TEXT_TO_REPLACE +"\n\\schemestop"+"\n\\end{align*}" 
-    )
-    TEMPLATE_TEX_FILE_BODY = TEMPLATE_TEXT_FILE_BODY.replace(
-        TEX_TEXT_TO_REPLACE,
-        "\\begin{align*}\n" + TEX_TEXT_TO_REPLACE + "\n\\end{align*}",
-    )
-
-```
-
-4. Add `\usepackage{chemfig}` to the `manimlib\tex_template.tex` and `manimlib\ctex_template.tex`
-files, like all the other packages listed there.
 
 That's about it.
 
 ## Usage
 ```py
-from chanim.imports import *
+from chanim import *
 
 class MoleculeOrReaction(Scene):
     <name> = ChemObject(<chemfig code>)
@@ -62,6 +26,19 @@ manim chem.py MoleculeOrReaction -pl
 ```
 This'll render your Scene and preview it in your default player (in 'l'ow quality).
 
+Here's a little example of it working.
+
+```py
+from chanim import *
+
+class ChanimScene(Scene):
+    def construct(self):
+        chem = ChemWithName("*6((=O)-N(-CH_3)-*5(-N=-N(-CH_3)-=)--(=O)-N(-H_3C)-)")
+
+        self.play(chem.creation_anim())
+        self.wait()
+```
+![output](ChanimScene.gif)
 Congrats! You've written and played your first animation (or "chanimation" should I say)
 
 Explore the code and docs (not written yet) for more on how to use chanim.
@@ -72,4 +49,6 @@ Currently chanim only supports drawing compounds and reactions along with a few 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
 
-Also, at the moment chanim won't work with the [community version of manim](https://github.com/ManimCommunity/manim) due to the changes in how the TeX templates are used and modified, which I haven't really figured out how to incorporate with chanim. It may become an addon at some point, but not anytime in the near future unfortunately. Thus consider using the 3b1b/manim version instead.
+~~Also, at the moment chanim won't work with the [community version of manim](https://github.com/ManimCommunity/manim) due to the changes in how the TeX templates are used and modified, which I haven't really figured out how to incorporate with chanim. It may become an addon at some point, but not anytime in the near future unfortunately. Thus consider using the 3b1b/manim version instead.~~
+
+**Chanim is compatible with ManimCE now, but unforunately it is not backward compatible with the 3b1b version.** Also, it isn't an "addon" for the time being, so you'll still have to clone it and use it like earlier.
