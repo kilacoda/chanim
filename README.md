@@ -4,9 +4,10 @@ for making videos regarding chemistry.
 
 ## Installation
 1. Get manim as described [here](https://manimce.readthedocs.io/en/latest/installation.html) according to your OS,  or `pip install manimce` (will be `pip install manim` [soon](https://github.com/pypa/pypi-support/issues/450)). You'll have to download other required modules as explained at the manim page.
-2. Clone the contents of this repository to where you'll keep your animation projects.
+2. Clone the contents of this repository.
+3. Open a terminal in the cloned directory and run `pip install -e .` (note: requires `pip` to be installed, see how to install for your OS)
 
-That's about it.
+That's about it. You can now do `from chanim import <*|object_name>` like any regular Python package. 
 
 ## Usage
 ```py
