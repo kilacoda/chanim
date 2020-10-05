@@ -1,8 +1,9 @@
-from numpy.lib.utils import deprecate
-from chanim.templates import ChemReactionTemplate, ChemTemplate
+from typing import List, Union
+
+from .templates import ChemReactionTemplate, ChemTemplate
+
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
 from manim.mobject.svg.tex_mobject import *
-from typing import List, Tuple, Union
 from manim.animation.fading import FadeInFromDown
 from manim.animation.animation import Animation
 from manim.animation.creation import Write
@@ -12,7 +13,7 @@ from manim.constants import *
 from manim.utils.config_ops import digest_config
 from manim.mobject.geometry import SmallDot
 from manim.config import config
-
+from manim.utils.color import YELLOW
 
 def check_if_instance_change_if_not(obj, instance_of):
     if not isinstance(obj, instance_of):
