@@ -15,6 +15,7 @@ from manim.mobject.geometry import SmallDot
 from manim.config import config
 from manim.utils.color import YELLOW
 
+
 def check_if_instance_change_if_not(obj, instance_of):
     if not isinstance(obj, instance_of):
         obj = instance_of(obj)
@@ -40,7 +41,7 @@ class ChemObject(MathTex):
     `__init__` and page 7 of the manual (http://ctan.imsc.res.in/macros/generic/chemfig/chemfig-en.pdf)
     """
 
-    CONFIG = {"stroke_width": 2}
+    CONFIG = {"stroke_width": 2, "tex_template": ChemTemplate()}
 
     def __init__(
         self,
@@ -55,10 +56,9 @@ class ChemObject(MathTex):
         bond_style="",
         **kwargs,
     ):
-        old_tex_template = config["tex_template"]
-
-        config["tex_template"] = ChemTemplate()
-        config["tex_template"].set_chemfig(
+        digest_config(self, kwargs)
+        template: ChemTemplate = self.tex_template
+        template.set_chemfig(
             atom_sep,
             chemfig_style,
             atom_style,
@@ -69,8 +69,6 @@ class ChemObject(MathTex):
             bond_style,
         )
         super().__init__("\\chemfig{%s}" % chem_code)
-
-        config["tex_template"] = old_tex_template
 
     def set_ion_position(
         self, string_number=0, e_index=0, final_atom_index=1, direction=LEFT
@@ -130,7 +128,7 @@ class ComplexChemCompound(MathTex):
 ## IT'S BWOKEN!! *sob*
 ## UPDATE 21/04/20: This... works again for some reason?
 ## UPDATE 07/05/20: Use Something like FadeIn for this instead of Write; because Write is fokken broken.
-class Reaction(MathTex):
+class Reaction(Tex):
     """
     `chanimlib.chem_objects.Reaction`
     Reaction
@@ -173,8 +171,9 @@ class Reaction(MathTex):
     CONFIG = {
         "stroke_width": 2,
         # "use_hbox":false,
-        "excluded_strings": ["\\+"],
-        "alignment": ""
+        "excluded_strings": ["\\schemestart", "\\schemestop", "\\\\"],
+        "alignment": "",
+        "tex_template": ChemReactionTemplate(),
     }
 
     arrows = {
@@ -218,10 +217,9 @@ class Reaction(MathTex):
         # old code
         # if use_hbox:
         #     self.template_tex_file_body = TEMPLATE_CHEM_REACTION_FILE_BODY_WITH_HBOX
-        old_tex_template = config["tex_template"]
 
-        config["tex_template"] = ChemReactionTemplate()
-        config["tex_template"].set_chemfig(
+        template: ChemReactionTemplate = self.tex_template
+        template.set_chemfig(
             atom_sep,
             chemfig_style,
             atom_style,
@@ -229,12 +227,11 @@ class Reaction(MathTex):
             bond_offset,
             double_bond_sep,
             node_style,
-            bond_style,
-            arrow_type,
-            arrow_length,
-            arrow_angle,
-            arrow_style,
-            debug,
+            # bond_style,
+            # arrow_length,
+            # arrow_angle,
+            # arrow_style,
+            # debug,
         )
 
         self.reactants = reactants
@@ -249,8 +246,6 @@ class Reaction(MathTex):
         print(repr(self.equation))
 
         super().__init__(*self.equation)
-
-        config["tex_template"] = old_tex_template
 
         ##Convenience aliases.
         self.arrow = self[2 * len(self.reactants) - 1]
@@ -273,7 +268,7 @@ class Reaction(MathTex):
             )
 
         # ## To prevent manim from writing the arrow to a separate file.
-        self.excluded_strings.append(arrow)
+        # self.excluded_strings.append(arrow)
         print(self.excluded_strings)
         print()
         r = [
@@ -305,23 +300,17 @@ class Reaction(MathTex):
 
         n = len(iterable)
         accumulator = 0
+        print(n)
 
-        if n % 2 == 0:
-            indexes_to_insert_at = range(n - 1, 0, -1)
-            print(list(indexes_to_insert_at))
+        if n != 1:
+            indexes_to_insert_at = np.array(range(1,n))
+            print(indexes_to_insert_at)
+
             for i in indexes_to_insert_at:
-                iterable.insert(i, obj)
+                iterable.insert(-i, obj)
                 print(iterable)
-                accumulator += 1
-            # iterable.insert(-1, obj)
-        elif n % 2 != 0 and n != 1:
-            indexes_to_insert_at = [1, *range(n - 1, 0, -1)] if n != 3 else (2, 1)
-            print(list(indexes_to_insert_at))
-            for i in indexes_to_insert_at:
-                iterable.insert(i, obj)
-                print(iterable)
-                accumulator += 1
-                # print(iterable)
+                indexes_to_insert_at+=1
+
 
     # I think this was intended to give a dict or something of all reactants and products. IDK
     def get_breakdown_dict(self):
