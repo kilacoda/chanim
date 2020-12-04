@@ -2,6 +2,9 @@
 This is an extension to 3BlueBrown's [Manim](https://www.github.com/3b1b/manim) library,
 for making videos regarding chemistry.
 
+# NOTE
+This branch (`master`) will not work with ManimCE. Checkout the ManimCE-TexTemplate-Working branch if you want to do that. Read the note below for more info.
+
 ## Installation
 1. Get manim from the above link or `pip install manimlib`. You'll have to download other 
 required modules as explained at the manim page.
