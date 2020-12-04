@@ -12,7 +12,6 @@ from manim.mobject.geometry import DashedLine
 from manim.constants import *
 from manim.utils.config_ops import digest_config
 from manim.mobject.geometry import SmallDot
-from manim.config import config
 from manim.utils.color import YELLOW
 
 
