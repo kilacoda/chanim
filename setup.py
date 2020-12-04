@@ -128,4 +128,9 @@ setup(
     cmdclass={
         'upload': UploadCommand,
     },
+    entry_points={
+        "manim.plugins":[
+            "chanim = chanim"
+        ]
+    }
 )
