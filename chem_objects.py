@@ -207,7 +207,7 @@ class Reaction(Tex):
         node_style="",
         bond_style="",
         stroke_width=2,
-        tex_template=ChemReactionTemplate(),
+        tex_template=ChemReactionTemplate,
         **kwargs,
     ):
 
@@ -217,20 +217,20 @@ class Reaction(Tex):
         # if use_hbox:
         #     self.template_tex_file_body = TEMPLATE_CHEM_REACTION_FILE_BODY_WITH_HBOX
 
-        self.template: ChemReactionTemplate = tex_template
+        self.template: ChemReactionTemplate = tex_template()
         self.template.set_chemfig(
-            atom_sep,
-            chemfig_style,
-            atom_style,
-            angle_increment,
-            bond_offset,
-            double_bond_sep,
-            node_style,
-            bond_style,
-            arrow_length,
-            arrow_angle,
-            arrow_style,
-            debug,
+            atom_sep=atom_sep,
+            chemfig_style=chemfig_style,
+            atom_style=atom_style,
+            angle_increment=angle_increment,
+            bond_offset=bond_offset,
+            double_bond_sep=double_bond_sep,
+            node_style=node_style,
+            bond_style=bond_style,
+            arrow_length=arrow_length,
+            arrow_angle=arrow_angle,
+            arrow_style=arrow_style,
+            debug=debug,
         )
 
         self.reactants = reactants
@@ -244,7 +244,7 @@ class Reaction(Tex):
         self.equation = self.get_equation()
         print(repr(self.equation))
 
-        super().__init__(*self.equation, strok_width=stroke_width, **kwargs)
+        super().__init__(*self.equation, strok_width=stroke_width, tex_template=self.template, **kwargs)
 
         ##Convenience aliases.
         self.arrow = self[2 * len(self.reactants) - 1]
