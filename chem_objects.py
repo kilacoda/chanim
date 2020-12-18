@@ -45,31 +45,34 @@ class ChemObject(MathTex):
         self,
         chem_code: str,
         atom_sep: str = "2em",  ## all of these are the defaults in chemfig
-        chemfig_style="",
-        atom_style="",
-        angle_increment=45,
-        bond_offset="2pt",
-        double_bond_sep="2pt",
-        node_style="",
-        bond_style="",
-        stroke_width=2,
+        chemfig_style: str = "",
+        atom_style: str = "",
+        angle_increment: int = 45,
+        bond_offset: str = "2pt",
+        double_bond_sep: str = "2pt",
+        node_style: str = "",
+        bond_style: str = "",
+        stroke_width: str = 2,
         tex_template=ChemTemplate,
         **kwargs,
     ):
         # digest_config(self, kwargs)
-        self.template: ChemTemplate = tex_template
+        self.template: ChemTemplate = tex_template()
         self.template.set_chemfig(
-            atom_sep,
-            chemfig_style,
-            atom_style,
-            angle_increment,
-            bond_offset,
-            double_bond_sep,
-            node_style,
-            bond_style,
+            atom_sep=atom_sep,
+            chemfig_style=chemfig_style,
+            atom_style=atom_style,
+            angle_increment=angle_increment,
+            bond_offset=bond_offset,
+            double_bond_sep=double_bond_sep,
+            node_style=node_style,
+            bond_style=bond_style,
         )
         super().__init__(
-            "\\chemfig{%s}" % chem_code, stroke_width=stroke_width, **kwargs
+            "\\chemfig{%s}" % chem_code,
+            stroke_width=stroke_width,
+            tex_template=self.template,
+            **kwargs,
         )
 
     def set_ion_position(
@@ -94,10 +97,8 @@ class ComplexChemIon(MathTex):
 
     def __init__(self, chem_code, stroke_width=2, charge="", **kwargs):
         # digest_config(self, kwargs)
-        self.comp = (
-            "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % charge
-        )
-        MathTex.__init__(self, self.comp, stroke_width=stroke_width,**kwargs)
+        self.comp = "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % charge
+        MathTex.__init__(self, self.comp, stroke_width=stroke_width, **kwargs)
 
 
 class ComplexChemCompound(MathTex):
