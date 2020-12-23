@@ -1,3 +1,7 @@
+"""chem_objects.py
+This file contains most of the classes provided by chanim. Includes ChemObject, Reaction, BondBreak etc.
+"""
+
 from typing import List, Union
 
 from .templates import ChemReactionTemplate, ChemTemplate
@@ -95,10 +99,10 @@ class ComplexChemIon(MathTex):
 
     # CONFIG = {"stroke_width": 2, "charge": ""}
 
-    def __init__(self, chem_code, stroke_width=2, charge="", **kwargs):
+    def __init__(self, chem_code, stroke_width=2, charge="",tex_template=ChemTemplate(), **kwargs):
         # digest_config(self, kwargs)
         self.comp = "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % charge
-        MathTex.__init__(self, self.comp, stroke_width=stroke_width, **kwargs)
+        MathTex.__init__(self, self.comp, stroke_width=stroke_width,tex_template=tex_template, **kwargs)
 
 
 class ComplexChemCompound(MathTex):
@@ -244,7 +248,12 @@ class Reaction(Tex):
         self.equation = self.get_equation()
         print(repr(self.equation))
 
-        super().__init__(*self.equation, strok_width=stroke_width, tex_template=self.template, **kwargs)
+        super().__init__(
+            *self.equation,
+            stroke_width=stroke_width,
+            tex_template=self.template,
+            **kwargs,
+        )
 
         ##Convenience aliases.
         self.arrow = self[2 * len(self.reactants) - 1]
@@ -316,6 +325,7 @@ class Reaction(Tex):
         self,
         text_anim: Animation = Write,
         arrow_anim: Animation = FadeInFromDown,
+        reactant_product_simultaneity=False,
         **kwargs,
     ) -> AnimationGroup:
         """Workaround and shortcut method to overcome the bugs in `Write`.
@@ -323,7 +333,7 @@ class Reaction(Tex):
         Args:
             text_anim (Animation, optional): The animation on the reactants and products. Defaults to Write.
             arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeInFromDown.
-
+            reactant_product_simultaneity (bool, optional): Whether to animate the reactants and products together or not.
         Returns:
             AnimationGroup: The group of animations on the text and arrow.
         """
@@ -343,7 +353,13 @@ class Reaction(Tex):
 
         print(kwargs["group_kwargs"])
 
-        anim_group = AnimationGroup(text_anim(text), arrow_anim(arrow), **kwargs)
+        anim_group = (
+            AnimationGroup(
+                text_anim(text[0]), text_anim(text[1]), arrow_anim(arrow), **kwargs
+            )
+            if reactant_product_simultaneity
+            else AnimationGroup(text_anim(text), arrow_anim(arrow), **kwargs)
+        )
 
         try:
             print(anim_group.run_time)
@@ -453,19 +469,19 @@ class ChemWithName(VMobject):
         self, chem, name, name_direction=DOWN, label_constructor=Tex, buff=1, **kwargs
     ):
 
-        VMobject.__init__(self, **kwargs)
+        super().__init__(self, **kwargs)
 
-        if isinstance(chem, ChemObject):
+        if isinstance(chem, (ChemObject,ComplexChemIon,ComplexChemCompound,ChemAbove)):
             self.chem = chem
         else:
             self.chem = ChemObject(chem, **kwargs)
 
-        if isinstance(name, self.label_constructor):
+        if isinstance(name, label_constructor):
             self.name = name
         else:
             self.name: Tex = label_constructor(name, **kwargs)
 
-        self.name.next_to(self.chem, name_direction, buff=self.buff)
+        self.name.next_to(self.chem, name_direction, buff=buff)
 
         self.submobjects = [self.chem, self.name]
 
