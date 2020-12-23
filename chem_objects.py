@@ -8,7 +8,7 @@ from .templates import ChemReactionTemplate, ChemTemplate
 
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
 from manim.mobject.svg.tex_mobject import *
-from manim.animation.fading import FadeInFromDown
+from manim.animation.fading import FadeInFrom
 from manim.animation.animation import Animation
 from manim.animation.creation import Write
 from manim.animation.composition import AnimationGroup
@@ -324,7 +324,7 @@ class Reaction(Tex):
     def show(
         self,
         text_anim: Animation = Write,
-        arrow_anim: Animation = FadeInFromDown,
+        arrow_anim: Animation = FadeInFrom,
         reactant_product_simultaneity=False,
         **kwargs,
     ) -> AnimationGroup:
@@ -332,7 +332,7 @@ class Reaction(Tex):
 
         Args:
             text_anim (Animation, optional): The animation on the reactants and products. Defaults to Write.
-            arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeInFromDown.
+            arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeInFrom.
             reactant_product_simultaneity (bool, optional): Whether to animate the reactants and products together or not.
         Returns:
             AnimationGroup: The group of animations on the text and arrow.
@@ -486,7 +486,7 @@ class ChemWithName(VMobject):
         self.submobjects = [self.chem, self.name]
 
     def creation_anim(
-        self, chem_anim: Animation = Write, name_anim: Animation = FadeInFromDown
+        self, chem_anim: Animation = Write, name_anim: Animation = FadeInFrom
     ):
         return AnimationGroup(chem_anim(self.chem), name_anim(self.name))
 
