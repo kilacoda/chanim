@@ -2,30 +2,27 @@
 Note that setting the TeX template for a scene will affect all subsequent TexMobjects until another change in template.
 """
 
-from typing import overload
-from manim.utils.tex import TexTemplate, TexTemplateFromFile
+from manim.utils.tex import TexTemplate
 
 
 class ChemTemplate(TexTemplate):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
-
         self.add_to_preamble("\\usepackage{chemfig}")
 
 
     def set_chemfig(
         self,
         atom_sep: str = "2em", ## all of these are the defaults in chemfig
-        chemfig_style="",
-        atom_style="",
-        angle_increment=45,
-        bond_offset="2pt",
-        double_bond_sep="2pt",
-        node_style="",
-        bond_style="",
+        chemfig_style:str="",
+        atom_style:str="",
+        angle_increment:int=45,
+        bond_offset:str="2pt",
+        double_bond_sep:str="2pt",
+        node_style:str="",
+        bond_style:str="",
     ):
         set_chemfig = "\\setchemfig{atom sep=%s,chemfig style=%s, atom style=%s,angle increment=%d,bond offset=%s,double bond sep=%s, node style=%s, bond style=%s}" % (atom_sep,chemfig_style,atom_style,angle_increment,bond_offset,double_bond_sep,node_style,bond_style)
-
         self.add_to_preamble(set_chemfig)
 
 
@@ -56,7 +53,7 @@ class ChemReactionTemplate(TexTemplate):
         set_chemfig = "\\setchemfig{atom sep=%s,chemfig style=%s, atom style=%s,angle increment=%d,bond offset=%s,double bond sep=%s, node style=%s, bond style=%s,scheme debug=%s, atom sep=2em, arrow angle={%d}, arrow coeff={%s}, arrow style={%s}}" % (atom_sep,chemfig_style,atom_style,angle_increment,bond_offset,double_bond_sep,node_style,bond_style,debug, arrow_angle, arrow_length, arrow_style)
 
         self.add_to_preamble(set_chemfig)
-    
+
     def get_texcode_for_expression(self, expression):
         """Inserts expression verbatim into TeX template.
 
