@@ -3,7 +3,9 @@ This is an extension to 3BlueBrown's [Manim](https://www.github.com/3b1b/manim) 
 for making videos regarding chemistry.
 
 # NOTE
-This branch (`master`) will not work with ManimCE. Checkout the ManimCE-TexTemplate-Working branch if you want to do that. Read the note below for more info.
+This branch (`master`) will not work with [ManimCE](https://github.com/ManimCommunity/manim). Checkout the ManimCE-TexTemplate-Working branch if you want to do that. Read the note below for more info.
+
+**This branch will be merged with the ManimCE-TexTemplate-Working branch on January 15, 2021, and chanim will henceforth cease to work with 3b1b/manim. In case you're using chanim for any purposes at the moment, I would advise that you migrate to ManimCE before said date. Read the last section for more info.**
 
 ## Installation
 1. Get manim from the above link or `pip install manimlib`. You'll have to download other 
@@ -75,4 +77,15 @@ Currently chanim only supports drawing compounds and reactions along with a few 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
 
-Also, at the moment chanim won't work with the [community version of manim](https://github.com/ManimCommunity/manim) due to the changes in how the TeX templates are used and modified, though only on he master branch. See the [ManimCE-TexTemplate-Working](https://github.com/raghavg123/chanim/tree/ManimCE-TexTemplate-Working) branch for a ManimCE compatible version.
+Also, at the moment chanim's master branch (the one you're on) won't work with the [community version of manim](https://github.com/ManimCommunity/manim) due to the changes in how the TeX templates are used and modified, though only on he master branch. See the [ManimCE-TexTemplate-Working](https://github.com/raghavg123/chanim/tree/ManimCE-TexTemplate-Working) branch for a ManimCE compatible version.
+
+## Why deprecate this branch?
+When I started writing chanim back at the start of 2020, the state of manim was quite different to what it is now. Back then, I had to do hacky things like making custom `constants.py` files and thus held off on releasing chanim to PyPI, since I didn't know how to replicate such things as a package.
+
+However, now with ManimCE, and the `TexTemplate` functionality that comes alongwith it, I can (and already have) do the same things via normal code, and less hacks. Thus, I can package chanim for PyPI to make it more easier for people to use. I do believe this tool could be useful to other people as well, and the first step is to move onwards from 3b1b/manim and becoming a plugin for ManimCE that is published and updated on PyPI.
+
+Another reason is that I personally never use the master branch, nor am I updating it anymore, due to my priorities as of late being getting chanim up and running with ManimCE, since it makes (at least mine) life easier. Easier to maintain, scene caching reduces render times drastically, better CLI interface, lots of bugfixes, the list goes on. The 3b1b/manim repo on the other hand is practically never updated except (even for fixing bugs) for the shaders branch, which although a really cool development, I can't see myself using anytime soon.
+
+TL;DR I don't see the benefit of keeping `3b1b/manim`-compatible while keeping the `ManimCE` version in a separate branch and asking people to `git checkout` to that branch if they want to use the new features. Hence, branch merge on **January 15th, 2021**
+
+If you have any objections or feel you have a better solution, feel free to contact me or file an issue.
