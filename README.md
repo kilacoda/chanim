@@ -2,6 +2,11 @@
 This is an extension to 3BlueBrown's [Manim](https://www.github.com/ManimCommunity/manim) library,
 for making videos regarding chemistry.
 
+# NOTE
+This branch (`master`) will not work with [ManimCE](https://github.com/ManimCommunity/manim). Checkout the ManimCE-TexTemplate-Working branch if you want to do that. Read the note below for more info.
+
+**This branch will be merged with the ManimCE-TexTemplate-Working branch on January 15, 2021, and chanim will henceforth cease to work with 3b1b/manim. In case you're using chanim for any purposes at the moment, I would advise that you migrate to ManimCE before said date. Read the last section for more info.**
+
 ## Installation
 1. Get manim as described [here](https://manimce.readthedocs.io/en/latest/installation.html) according to your OS,  or `pip install manimce` (will be `pip install manim` [soon](https://github.com/pypa/pypi-support/issues/450)). You'll have to download other required modules as explained at the manim page.
 2. Clone the contents of this repository.
@@ -50,6 +55,3 @@ Currently chanim only supports drawing compounds and reactions along with a few 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
 
-~~Also, at the moment chanim won't work with the [community version of manim](https://github.com/ManimCommunity/manim) due to the changes in how the TeX templates are used and modified, which I haven't really figured out how to incorporate with chanim. It may become an addon at some point, but not anytime in the near future unfortunately. Thus consider using the 3b1b/manim version instead.~~
-
-**Chanim is compatible with ManimCE now, but unforunately it is not backward compatible with the 3b1b version.** Also, it isn't an "addon" for the time being, so you'll still have to clone it and use it like earlier.
