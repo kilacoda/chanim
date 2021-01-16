@@ -1,4 +1,4 @@
-from chanimlib.chem_objects import ChemObject
+from .chem_objects import ChemObject
 
 """
 Lazy Classes to create useful organic compounds.

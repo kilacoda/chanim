@@ -1,4 +1,4 @@
-from manimlib.animation.transform import Transform, ReplacementTransform
+from manim.animation.transform import Transform, ReplacementTransform
 
 class BondToElectronPair(Transform):
     def __init__(self,mob,bond_pos):

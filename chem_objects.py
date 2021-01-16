@@ -1,14 +1,21 @@
-from manimlib.mobject.types.vectorized_mobject import VGroup, VMobject
-from manimlib.mobject.svg.tex_mobject import *
-from typing import List, Tuple, Union
-from manimlib.animation.fading import FadeInFromDown
-from manimlib.animation.animation import Animation
-from manimlib.animation.creation import Write
-from manimlib.animation.composition import AnimationGroup
-from manimlib.mobject.geometry import DashedLine
-from manimlib.constants import *
-from manimlib.utils.config_ops import digest_locals
-from manimlib.mobject.geometry import SmallDot
+"""chem_objects.py
+This file contains most of the classes provided by chanim. Includes ChemObject, Reaction, BondBreak etc.
+"""
+
+from typing import List, Union
+
+from .templates import ChemReactionTemplate, ChemTemplate
+
+from manim.mobject.types.vectorized_mobject import VGroup, VMobject
+from manim.mobject.svg.tex_mobject import *
+from manim.animation.fading import FadeInFrom
+from manim.animation.animation import Animation
+from manim.animation.creation import Write
+from manim.animation.composition import AnimationGroup
+from manim.mobject.geometry import DashedLine
+from manim.constants import *
+from manim.mobject.geometry import SmallDot
+from manim.utils.color import YELLOW
 
 
 def check_if_instance_change_if_not(obj, instance_of):
@@ -16,7 +23,7 @@ def check_if_instance_change_if_not(obj, instance_of):
         obj = instance_of(obj)
 
 
-class ChemObject(TexMobject):
+class ChemObject(MathTex):
     """
     `chanimlib.chem_objects.ChemObject`
 
@@ -31,16 +38,53 @@ class ChemObject(TexMobject):
     or
 
     >>> water = ChemObject("H[5]-O-H[-1]")      ## After repulsion
+
+    You can also set various prperties of the molecule using keyword arguments. See
+    `__init__` and page 7 of the manual (http://ctan.imsc.res.in/macros/generic/chemfig/chemfig-en.pdf)
     """
 
-    CONFIG = {"stroke_width": 2, "template_tex_file_body": TEMPLATE_CHEM_FILE_BODY}
+    # CONFIG = {"stroke_width": 2, "tex_template": ChemTemplate()}
+
+    def __init__(
+        self,
+        chem_code: str,
+        atom_sep: str = "2em",  ## all of these are the defaults in chemfig
+        chemfig_style: str = "",
+        atom_style: str = "",
+        angle_increment: int = 45,
+        bond_offset: str = "2pt",
+        double_bond_sep: str = "2pt",
+        node_style: str = "",
+        bond_style: str = "",
+        stroke_width: str = 2,
+        tex_template=ChemTemplate,
+        **kwargs,
+    ):
+        # digest_config(self, kwargs)
+        self.template: ChemTemplate = tex_template()
+        self.template.set_chemfig(
+            atom_sep=atom_sep,
+            chemfig_style=chemfig_style,
+            atom_style=atom_style,
+            angle_increment=angle_increment,
+            bond_offset=bond_offset,
+            double_bond_sep=double_bond_sep,
+            node_style=node_style,
+            bond_style=bond_style,
+        )
+        super().__init__(
+            "\\chemfig{%s}" % chem_code,
+            stroke_width=stroke_width,
+            tex_template=self.template,
+            **kwargs,
+        )
 
     def set_ion_position(
         self, string_number=0, e_index=0, final_atom_index=1, direction=LEFT
     ):
         """
         This is to facilitate shifting of ionic and lewis electrons,
-        by '.move_to''ing them to the direction you provide.
+        by `.move_to`'ing them to the direction you provide.
         """
 
         self[string_number][e_index].move_to(
@@ -48,32 +92,31 @@ class ChemObject(TexMobject):
         )
 
 
-class ComplexChemIon(TexMobject):
+class ComplexChemIon(MathTex):
     """
     Mono-ionic Complexes
     """
 
-    CONFIG = {"stroke_width": 2, "charge": ""}
+    # CONFIG = {"stroke_width": 2, "charge": ""}
 
-    def __init__(self, chem_code, **kwargs):
-        digest_config(self, kwargs)
-        self.comp = (
-            "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % self.charge
-        )
-        TexMobject.__init__(self, self.comp, **kwargs)
+    def __init__(self, chem_code, stroke_width=2, charge="",tex_template=ChemTemplate(), **kwargs):
+        # digest_config(self, kwargs)
+        self.comp = "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % charge
+        MathTex.__init__(self, self.comp, stroke_width=stroke_width,tex_template=tex_template, **kwargs)
 
 
-class ComplexChemCompound(TexMobject):
+class ComplexChemCompound(MathTex):
     """
     Di-ionic Complexes
     """
 
-    CONFIG = {"stroke_width": 2}
+    # CONFIG = {"stroke_width": 2}
 
     def __init__(
         self,
         cation: Union[str, ChemObject, ComplexChemIon],
         anion: Union[str, ChemObject, ComplexChemIon],
+        stroke_width=2,
         **kwargs,
     ):
 
@@ -87,31 +130,24 @@ class ComplexChemCompound(TexMobject):
         elif isinstance(anion, ChemObject):
             anion = anion.tex_strings[0]
 
-        TexMobject.__init__(self, cation, anion, **kwargs)
+        MathTex.__init__(self, cation, anion, stroke_width=stroke_width, **kwargs)
 
 
 ## IT'S BWOKEN!! *sob*
 ## UPDATE 21/04/20: This... works again for some reason?
 ## UPDATE 07/05/20: Use Something like FadeIn for this instead of Write; because Write is fokken broken.
-class Reaction(TexMobject):
+class Reaction(Tex):
     """
     `chanimlib.chem_objects.Reaction`
     Reaction
     ========
     Writes out a traditional chem formula
 
-    Always use a list and not a tuple, especially if you are having only one
+    It is recommended to use a list and not a tuple, especially if you are having only one
     reactant or product. It causes errors as python treats single items inside
-    tuples as arguments. So "O=H" becomes "O","=","H"\n
-    Trust me, this gave me a headache for a while.
-
-    TODO: Fix this entire thing. It's fucking messed up. Also, check what happens \\
-    when you change the [index] element and if it works like a TexMobject.
-
-    I also kind of hate the current implementation of this because it forces one to\\
-    use chemfig strings instead of ChemObjects, which basically renders them useless,\\
-    while creating additional problems while indexing the atoms.
-
+    tuples as an argument of its own. So ("O=H") becomes "O","=","H".
+    If you really want to use a tuple for some reason,
+    add a comma at the end of the 0th item,e.g. ("O=H",)
 
     Arrow types:
     ============
@@ -119,26 +155,27 @@ class Reaction(TexMobject):
     "forward": "->",
 
     "backward": "<-",
-    
+
     "eq": "<=>",
-    
+
     "eq_fw": "<->>",
-    
+
     "eq_bw": "<<->",
-    
+
     "double": "<->",
-    
+
     "space": "0",
-    
+
     "split": "-U"
     """
 
-    CONFIG = {
-        "stroke_width": 2,
-        # "use_hbox":false,
-        "template_tex_file_body": TEMPLATE_CHEM_REACTION_FILE_BODY,
-        "excluded_strings": ["\\+"],
-    }
+    # CONFIG = {
+    #     "stroke_width": 2,
+    #     # "use_hbox":false,
+    #     "excluded_strings": ["\\schemestart", "\\schemestop", "\\\\"],
+    #     "alignment": "",
+    #     "tex_template": ChemReactionTemplate(),
+    # }
 
     arrows = {
         "forward": "->",
@@ -163,21 +200,41 @@ class Reaction(TexMobject):
         arrow_text_down="",
         arrow_align_params="",
         debug="false",
-        use_hbox=False,
+        # use_hbox=False, idk why this is here, probably not needed now
+        ## styling params from ChemObject, just keeping them here in case anyone wants to get funky with their molecule designs.
+        atom_sep: str = "2em",  ## all of these are the defaults in chemfig
+        chemfig_style="",
+        atom_style="",
+        angle_increment=45,
+        bond_offset="2pt",
+        double_bond_sep="2pt",
+        node_style="",
+        bond_style="",
+        stroke_width=2,
+        tex_template=ChemReactionTemplate,
         **kwargs,
     ):
 
-        digest_config(self, kwargs)
+        # digest_config(self, kwargs)
 
-        if use_hbox:
-            self.template_tex_file_body = TEMPLATE_CHEM_REACTION_FILE_BODY_WITH_HBOX
+        # old code
+        # if use_hbox:
+        #     self.template_tex_file_body = TEMPLATE_CHEM_REACTION_FILE_BODY_WITH_HBOX
 
-        set_chemfig = (
-            "\\setchemfig{scheme debug=%s, atom sep=2em, arrow angle={%d}, arrow coeff={%s}, arrow style={%s}}"
-            % (debug, arrow_angle, arrow_length, arrow_style)
-        )
-        self.template_tex_file_body = self.template_tex_file_body.replace(
-            "\\setchemfig{atom sep=2em}", f"{set_chemfig}"
+        self.template: ChemReactionTemplate = tex_template()
+        self.template.set_chemfig(
+            atom_sep=atom_sep,
+            chemfig_style=chemfig_style,
+            atom_style=atom_style,
+            angle_increment=angle_increment,
+            bond_offset=bond_offset,
+            double_bond_sep=double_bond_sep,
+            node_style=node_style,
+            bond_style=bond_style,
+            arrow_length=arrow_length,
+            arrow_angle=arrow_angle,
+            arrow_style=arrow_style,
+            debug=debug,
         )
 
         self.reactants = reactants
@@ -191,12 +248,17 @@ class Reaction(TexMobject):
         self.equation = self.get_equation()
         print(repr(self.equation))
 
-        TexMobject.__init__(self, *self.equation)
+        super().__init__(
+            *self.equation,
+            stroke_width=stroke_width,
+            tex_template=self.template,
+            **kwargs,
+        )
 
         ##Convenience aliases.
         self.arrow = self[2 * len(self.reactants) - 1]
-        self.reactants = self[:2 * len(self.reactants) - 1:2]
-        self.products = self[2 * len(self.reactants)::2]
+        self.reactants = self[: 2 * len(self.reactants) - 1 : 2]
+        self.products = self[2 * len(self.reactants) :: 2]
 
     def get_equation(self):
         if self.arrow_align_params != "":
@@ -214,9 +276,8 @@ class Reaction(TexMobject):
             )
 
         # ## To prevent manim from writing the arrow to a separate file.
-        self.excluded_strings.append(arrow)
-        print(self.excluded_strings)
-        print()
+        # self.excluded_strings.append(arrow)
+        # print(self.excluded_strings) ##for debugging
         r = [
             "\\chemfig{" + R + "}"
             if R != self.reactants[-1] and len(self.reactants) != 1
@@ -245,40 +306,34 @@ class Reaction(TexMobject):
         """
 
         n = len(iterable)
-        accumulator = 0
+        # print(n)
 
-        if n % 2 == 0:
-            indexes_to_insert_at = range(n - 1, 0, -1)
-            print(list(indexes_to_insert_at))
-            for i in indexes_to_insert_at:
-                iterable.insert(i, obj)
-                print(iterable)
-                accumulator += 1
-            # iterable.insert(-1, obj)
-        elif n % 2 != 0 and n != 1:
-            indexes_to_insert_at = [1, *range(n - 1, 0, -1)] if n != 3 else (2, 1)
-            print(list(indexes_to_insert_at))
-            for i in indexes_to_insert_at:
-                iterable.insert(i, obj)
-                print(iterable)
-                accumulator += 1
-                # print(iterable)
+        if n != 1:
+            indexes_to_insert_at = np.array(range(1, n))
+            print(indexes_to_insert_at)
 
+            for i in indexes_to_insert_at:
+                iterable.insert(-i, obj)
+                print(iterable)
+                indexes_to_insert_at += 1
+
+    # I think this was intended to give a dict or something of all reactants and products. IDK
     def get_breakdown_dict(self):
         pass
 
     def show(
         self,
         text_anim: Animation = Write,
-        arrow_anim: Animation = FadeInFromDown,
+        arrow_anim: Animation = FadeInFrom,
+        reactant_product_simultaneity=False,
         **kwargs,
     ) -> AnimationGroup:
         """Workaround and shortcut method to overcome the bugs in `Write`.
 
         Args:
             text_anim (Animation, optional): The animation on the reactants and products. Defaults to Write.
-            arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeInFromDown.
-
+            arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeInFrom.
+            reactant_product_simultaneity (bool, optional): Whether to animate the reactants and products together or not.
         Returns:
             AnimationGroup: The group of animations on the text and arrow.
         """
@@ -297,13 +352,15 @@ class Reaction(TexMobject):
             kwargs["group_kwargs"] = dict()
 
         print(kwargs["group_kwargs"])
-        
-        anim_group = AnimationGroup(
-            text_anim(text),
-            arrow_anim(arrow),
-            **kwargs
+
+        anim_group = (
+            AnimationGroup(
+                text_anim(text[0]), text_anim(text[1]), arrow_anim(arrow), **kwargs
+            )
+            if reactant_product_simultaneity
+            else AnimationGroup(text_anim(text), arrow_anim(arrow), **kwargs)
         )
-        
+
         try:
             print(anim_group.run_time)
         except Exception:
@@ -311,7 +368,7 @@ class Reaction(TexMobject):
         return anim_group
 
 
-class ChemArrow(TexMobject):
+class ChemArrow(MathTex):
     """
     `chanimlib.chem_objects.ChemArrow`
     Chemical Reaction Arrow
@@ -321,10 +378,9 @@ class ChemArrow(TexMobject):
     May change later.
     """
 
-    CONFIG = {
-        "stroke_width": 2,
-        "template_tex_file_body": TEMPLATE_CHEM_REACTION_FILE_BODY,
-    }
+    # CONFIG = {
+    #     "stroke_width": 2,
+    # }
 
     arrows = {
         "forward": "->",
@@ -345,9 +401,10 @@ class ChemArrow(TexMobject):
         style="{}",
         text_up="",
         text_down="",
+        stroke_width=2,
         **kwargs,
     ):
-        digest_config(self, kwargs)
+        # digest_config(self, kwargs)
         set_chemfig = """\\setchemfig{atom sep=2em,
                                       arrow angle={%d},
                                       arrow coeff={%s},
@@ -361,31 +418,31 @@ class ChemArrow(TexMobject):
         )
 
         arrow = "\\arrow{%s[%s][%s]}" % (self.arrows[_type], text_up, text_down)
-        TexMobject.__init__(self, arrow)
+        MathTex.__init__(self, arrow, stroke_width=stroke_width, **kwargs)
 
 
-class ChemName(TexMobject):
-
-    """
-    `chanimlib.chem_objects.ChemName`
+class ChemName(MathTex):
+    """`chanimlib.chem_objects.ChemName`
 
     An attempt to use chemfig's \\chemname{} macro.
 
     This will only be written in one go, so if you'd like
     animations for both parts see `ChemWithName`.
+
+    NOTE: To be deprecated. Use `ChemWithName` instead
     """
 
-    CONFIG = {"template_tex_file_body": TEMPLATE_CHEMNAME_FILE_BODY, "stroke_width": 2}
+    # CONFIG = {"stroke_width": 2}
 
-    def __init__(self, chem, name, buff=1, **kwargs):
-        digest_config(self, kwargs)
+    def __init__(self, chem, name, buff=1, stroke_width=2, **kwargs):
+        # digest_config(self, kwargs)
 
         chem_with_name = "\\chemname[%sem]{\\chemfig{%s}}{%s}" % (buff, chem, name)
         # self.template_tex_file_body = TEMPLATE_CHEM_FILE_BODY.replace(
         #     "\\chemfig{",
         #     chem_with_name)
 
-        TexMobject.__init__(self, chem_with_name)
+        MathTex.__init__(self, chem_with_name, stroke_width=stroke_width, **kwargs)
 
 
 class ChemWithName(VMobject):
@@ -401,38 +458,46 @@ class ChemWithName(VMobject):
     ```py
     ChemWithName.creation_anim(chem_anim,name_anim)
     ```
+
+
+    inspired by `BraceLabel`
     """
 
     CONFIG = {"label_constructor": TextMobject, "buff": 1}
 
-    def __init__(self, chem, name, name_direction=DOWN, **kwargs):
+    def __init__(
+        self, chem, name, name_direction=DOWN, label_constructor=Tex, buff=1, **kwargs
+    ):
 
-        VMobject.__init__(self, **kwargs)
+        super().__init__(self, **kwargs)
 
-        if isinstance(chem, ChemObject):
+        if isinstance(chem, (ChemObject,ComplexChemIon,ComplexChemCompound,ChemAbove)):
             self.chem = chem
         else:
             self.chem = ChemObject(chem, **kwargs)
 
-        if isinstance(name, self.label_constructor):
+        if isinstance(name, label_constructor):
             self.name = name
         else:
-            self.name = self.label_constructor(name, **kwargs)
+            self.name: Tex = label_constructor(name, **kwargs)
 
-        self.name.next_to(self.chem, name_direction, buff=self.buff)
+        self.name.next_to(self.chem, name_direction, buff=buff)
 
         self.submobjects = [self.chem, self.name]
 
-    def creation_anim(self, chem_anim=Write, name_anim=FadeInFromDown):
+    def creation_anim(
+        self, chem_anim: Animation = Write, name_anim: Animation = FadeInFrom
+    ):
         return AnimationGroup(chem_anim(self.chem), name_anim(self.name))
 
 
 class ChemAbove(ChemObject):
-    def __init__(self, chem, above_chem, hspace="3mm", vspace="1mm"):
+    def __init__(self, chem, above_chem, hspace="3mm", vspace="1mm", **kwargs):
         ChemObject.__init__(
             self,
             "\\chemabove{%s}{\\hspace{%s} \\vspace{%s} %s}"
             % (chem, hspace, vspace, above_chem),
+            **kwargs,
         )
 
 
@@ -455,6 +520,9 @@ class ReactionVGroup(VGroup):
         products: List[ChemObject] = [],
         **arrow_kwargs,
     ):
+        raise DeprecationWarning(
+            "ReactionVGroup doesn't work, and will probably be removed in the future"
+        )
         digest_config(self, arrow_kwargs)
         arrow = ChemArrow(
             self._type,
@@ -476,7 +544,7 @@ class ReactionVGroup(VGroup):
 
     def get_side_of_equation(self, iterableable):
         # A = [
-        #     *(Participant, TexMobject("+")) if Participant != iterableable[-1]
+        #     *(Participant, MathTex("+")) if Participant != iterableable[-1]
         #     else Participant
         #     for Participant in iterableable
         # ]
@@ -484,7 +552,7 @@ class ReactionVGroup(VGroup):
         A = []
         for Part in iterableable:
             if Part != iterableable[-1]:
-                A.extend([ChemObject(Part), TexMobject("+")])
+                A.extend([ChemObject(Part), MathTex("+")])
             else:
                 A.append(ChemObject(Part))
         return A
@@ -498,20 +566,21 @@ class ReactionVGroup(VGroup):
 class BondBreak(DashedLine):
     """
     `chanimlib.chem_objects.BondBreak`
-       Bond Break
-       ----------
 
-       A line that splits a given ``bond``.
+    Bond Break
+    ----------
+
+    A line that splits a given ``bond``.
     """
 
-    CONFIG = {
-        "length": 0.7,
-    }
+    # CONFIG = {
+    #     "length": 0.7,
+    # }
 
-    def __init__(self, bond, **kwargs):
-        digest_config(self, kwargs)
-        start = bond.get_center() + (self.length / 2) * DOWN
-        end = start + self.length * UP
+    def __init__(self, bond: TexSymbol, length=0.7, **kwargs):
+        # digest_config(self, kwargs)
+        start = bond.get_center() + (length / 2) * DOWN
+        end = start + length * UP
 
         DashedLine.__init__(self, start=start, end=end)
 
@@ -520,16 +589,17 @@ class ElectronPair(VGroup):
     """Electron Pair: Two electrons (SmallDots) in a VGroup
 
     Arguments:
-        None -- Just use this as it is and change the CONFIG stuff if you want
+        None -- Just use this as it is and change the kwargs if you want
     """
 
-    CONFIG = dict(color=YELLOW, pair_buff=0.15)
+    # CONFIG = dict(color=YELLOW, pair_buff=0.15)
 
-    def __init__(self, **kwargs):
+    def __init__(self, color=YELLOW, pair_buff=0.15, **kwargs):
         super().__init__(SmallDot(), SmallDot(), **kwargs)
-        self.arrange(RIGHT, buff=self.pair_buff).set_color(self.color)
+        self.arrange(RIGHT, buff=pair_buff).set_color(color)
 
 
+## Aliases
 Formula = ChemObject
 CArrow = ChemArrow
 React = Reaction
