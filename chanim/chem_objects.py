@@ -389,7 +389,8 @@ class Reaction(Tex):
     def get_breakdown_dict(self):
         pass
 
-    def show(
+    # can't really think of a better name for this atm, and show will overwrite Mobject.show
+    def creation_anim(
         self,
         text_anim: Animation = Write,
         arrow_anim: Animation = FadeInFrom,
