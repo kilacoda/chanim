@@ -14,7 +14,7 @@ from manim.animation.creation import Write
 from manim.animation.composition import AnimationGroup
 from manim.mobject.geometry import DashedLine
 from manim.constants import *
-from manim.mobject.geometry import SmallDot
+from manim.mobject.geometry import Dot
 from manim.utils.color import YELLOW
 from manim.opengl import OpenGLMathTex
 
