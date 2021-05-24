@@ -532,7 +532,7 @@ class ChemWithName(VMobject):
     inspired by `BraceLabel`
     """
 
-    CONFIG = {"label_constructor": TextMobject, "buff": 1}
+    CONFIG = {"label_constructor": Tex, "buff": 1}
 
     def __init__(
         self, chem, name, name_direction=DOWN, label_constructor=Tex, buff=1, **kwargs
