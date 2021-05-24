@@ -4,6 +4,8 @@ This file contains most of the classes provided by chanim. Includes ChemObject, 
 
 from typing import List, Union
 
+import numpy as np
+
 from .templates import ChemReactionTemplate, ChemTemplate
 
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
@@ -655,7 +657,7 @@ class BondBreak(DashedLine):
 
 
 class ElectronPair(VGroup):
-    """Electron Pair: Two electrons (SmallDots) in a VGroup
+    """Electron Pair: Two electrons (Dots) in a VGroup
 
     Arguments:
         None -- Just use this as it is and change the kwargs if you want
@@ -664,7 +666,7 @@ class ElectronPair(VGroup):
     # CONFIG = dict(color=YELLOW, pair_buff=0.15)
 
     def __init__(self, color=YELLOW, pair_buff=0.15, **kwargs):
-        super().__init__(SmallDot(), SmallDot(), **kwargs)
+        super().__init__(Dot(radius=DEFAULT_SMALL_DOT_RADIUS), Dot(RADIUS=DEFAULT_SMALL_DOT_RADIUS), **kwargs)
         self.arrange(RIGHT, buff=pair_buff).set_color(color)
 
 
