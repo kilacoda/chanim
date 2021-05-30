@@ -350,8 +350,10 @@ class Reaction(Tex):
         # print(self.excluded_strings) ##for debugging
         r = [
             "\\chemfig{" + R + "}"
-            if R != self.reactants[-1] and len(self.reactants) != 1
-            else "\\chemfig{" + R + "}"
+            # if R != self.reactants[-1] and len(self.reactants) != 1
+            # else "\\chemfig{" + R + "}"
+            if "chemfig" not in R
+            else R
             for R in self.reactants
         ]
 
@@ -359,8 +361,10 @@ class Reaction(Tex):
 
         p = [
             "\\chemfig{" + P + "}"
-            if P != self.products[-1] and len(self.products) != 1
-            else "\\chemfig{" + P + "}"
+            # if P != self.products[-1] and len(self.products) != 1
+            # else "\\chemfig{" + P + "}"
+            if "chemfig" not in P
+            else P
             for P in self.products
         ]
 
