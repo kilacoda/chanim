@@ -332,7 +332,7 @@ class Reaction(Tex):
         if type(arrow_type) == Arrows:
             self.arrow_type = arrow_type.value
         elif arrow_type in Arrows.__members__.keys():  # handles old strings
-            self.arrow_type = Arrows[arrow_type]
+            self.arrow_type = Arrows[arrow_type].value
         else:
             logger.warning(
                 "Arrow type not recognised. Defaulting to Arrows.forward (->)"
