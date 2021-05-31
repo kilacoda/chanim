@@ -7,6 +7,7 @@ from typing import List, Union
 import numpy as np
 
 from .templates import ChemReactionTemplate, ChemTemplate
+from .utils import Arrows
 
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
 from manim.mobject.svg.tex_mobject import *
@@ -19,6 +20,8 @@ from manim.constants import *
 from manim.mobject.geometry import Dot
 from manim.utils.color import YELLOW
 from manim.opengl import OpenGLMathTex
+from manim._config import logger
+
 
 def check_if_instance_change_if_not(obj, instance_of):
     if not isinstance(obj, instance_of):
@@ -92,6 +95,7 @@ class ChemObject(MathTex):
         self[string_number][e_index].move_to(
             self[final_atom_index].get_edge_center(direction) + direction * 0.2
         )
+
 
 class OpenGLChemObject(OpenGLMathTex):
     """
@@ -169,10 +173,23 @@ class ComplexChemIon(MathTex):
 
     # CONFIG = {"stroke_width": 2, "charge": ""}
 
-    def __init__(self, chem_code, stroke_width=2, charge="",tex_template=ChemTemplate(), **kwargs):
+    def __init__(
+        self,
+        chem_code,
+        stroke_width=2,
+        charge="",
+        tex_template=ChemTemplate(),
+        **kwargs,
+    ):
         # digest_config(self, kwargs)
         self.comp = "\chemleft[\chemfig{" + chem_code + "}\chemright]^{%s}" % charge
-        MathTex.__init__(self, self.comp, stroke_width=stroke_width,tex_template=tex_template, **kwargs)
+        MathTex.__init__(
+            self,
+            self.comp,
+            stroke_width=stroke_width,
+            tex_template=tex_template,
+            **kwargs,
+        )
 
 
 class ComplexChemCompound(MathTex):
@@ -247,22 +264,12 @@ class Reaction(Tex):
     #     "tex_template": ChemReactionTemplate(),
     # }
 
-    arrows = {
-        "forward": "->",
-        "backward": "<-",
-        "eq": "<=>",
-        "eq_fw": "<->>",
-        "eq_bw": "<<->",
-        "double": "<->",
-        "space": "0",
-        "split": "-U",
-    }
 
     def __init__(
         self,
-        reactants: List[str] = [],
-        products: List[str] = [],
-        arrow_type="forward",
+        reactants: List[str] = None,
+        products: List[str] = None,
+        arrow_type: Arrows = Arrows.forward,
         arrow_length=1,
         arrow_angle=0,
         arrow_style="",
@@ -307,16 +314,37 @@ class Reaction(Tex):
             debug=debug,
         )
 
-        self.reactants = reactants
-        self.products = products
-        # print(self.reactants,self.products)
-        self.arrow_type = arrow_type
+        if reactants is None:
+            logger.warning("No reactants provided, defaulting to empty list.")
+            self.reactants = []
+
+        if products is None:
+            logger.warning("No products provided, defaulting to empty list.")
+            self.products = []
+
+        if all([hasattr(reactants,"__iter__"),hasattr(reactants,"__iter__")]):
+            self.reactants = reactants
+            self.products = products
+        else:
+            raise TypeError("Reaction reactants and products must be None or iterable.")
+
+        ## Arrow stuff
+        if type(arrow_type) == Arrows:
+            self.arrow_type = arrow_type.value
+        elif arrow_type in Arrows.__members__.keys():  # handles old strings
+            self.arrow_type = Arrows[arrow_type]
+        else:
+            logger.warning(
+                "Arrow type not recognised. Defaulting to Arrows.forward (->)"
+            )
+            self.arrow_type = Arrows.forward.value
+
         self.arrow_text_up = arrow_text_up
         self.arrow_text_down = arrow_text_down
         self.arrow_align_params = arrow_align_params
 
         self.equation = self.get_equation()
-        print(repr(self.equation))
+        # print(repr(self.equation))
 
         super().__init__(
             *self.equation,
@@ -352,8 +380,7 @@ class Reaction(Tex):
             "\\chemfig{" + R + "}"
             # if R != self.reactants[-1] and len(self.reactants) != 1
             # else "\\chemfig{" + R + "}"
-            if "chemfig" not in R
-            else R
+            if "chemfig" not in R else R
             for R in self.reactants
         ]
 
@@ -363,8 +390,7 @@ class Reaction(Tex):
             "\\chemfig{" + P + "}"
             # if P != self.products[-1] and len(self.products) != 1
             # else "\\chemfig{" + P + "}"
-            if "chemfig" not in P
-            else P
+            if "chemfig" not in P else P
             for P in self.products
         ]
 
@@ -546,7 +572,9 @@ class ChemWithName(VMobject):
 
         super().__init__(self, **kwargs)
 
-        if isinstance(chem, (ChemObject,ComplexChemIon,ComplexChemCompound,ChemAbove)):
+        if isinstance(
+            chem, (ChemObject, ComplexChemIon, ComplexChemCompound, ChemAbove)
+        ):
             self.chem = chem
         else:
             self.chem = ChemObject(chem, **kwargs)
@@ -670,7 +698,11 @@ class ElectronPair(VGroup):
     # CONFIG = dict(color=YELLOW, pair_buff=0.15)
 
     def __init__(self, color=YELLOW, pair_buff=0.15, **kwargs):
-        super().__init__(Dot(radius=DEFAULT_SMALL_DOT_RADIUS), Dot(RADIUS=DEFAULT_SMALL_DOT_RADIUS), **kwargs)
+        super().__init__(
+            Dot(radius=DEFAULT_SMALL_DOT_RADIUS),
+            Dot(RADIUS=DEFAULT_SMALL_DOT_RADIUS),
+            **kwargs,
+        )
         self.arrange(RIGHT, buff=pair_buff).set_color(color)
 
 
