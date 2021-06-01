@@ -264,7 +264,6 @@ class Reaction(Tex):
     #     "tex_template": ChemReactionTemplate(),
     # }
 
-
     def __init__(
         self,
         reactants: List[str] = None,
@@ -322,7 +321,7 @@ class Reaction(Tex):
             logger.warning("No products provided, defaulting to empty list.")
             self.products = []
 
-        if all([hasattr(reactants,"__iter__"),hasattr(reactants,"__iter__")]):
+        if all([hasattr(reactants, "__iter__"), hasattr(reactants, "__iter__")]):
             self.reactants = reactants
             self.products = products
         else:
