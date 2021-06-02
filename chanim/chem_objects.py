@@ -361,13 +361,13 @@ class Reaction(Tex):
         if self.arrow_align_params != "":
             arrow = "\\arrow(%s){%s[%s][%s]}" % (
                 self.arrow_align_params,
-                self.arrows[self.arrow_type],
+                self.arrow_type,
                 self.arrow_text_up,
                 self.arrow_text_down,
             )
         else:
             arrow = "\\arrow{%s[%s][%s]}" % (
-                self.arrows[self.arrow_type],
+                self.arrow_type,
                 self.arrow_text_up,
                 self.arrow_text_down,
             )
