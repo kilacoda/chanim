@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "chanim"
+version = "1.0.1"
+description = "Manim extension for making chemistry videos"
+authors = ["kilacoda <kilacoda@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/raghavg123/chanim"
+keywords = ["chemistry","animation","manim"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+manim = ">=0.7.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.plugins."manim.plugins"]
+"chanim" = "chanim"
