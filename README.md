@@ -39,7 +39,7 @@ class ChanimScene(Scene):
         self.play(chem.creation_anim())
         self.wait()
 ```
-![output](ChanimScene.gif)
+![output](https://raw.githubusercontent.com/raghavg123/chanim/master/ChanimScene.gif)
 Congrats! You've written and played your first animation (or "chanimation" should I say)
 
 Explore the code and docs (not written yet) for more on how to use chanim.
