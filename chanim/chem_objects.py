@@ -470,55 +470,54 @@ class Reaction(Tex):
 
 class ChemArrow(MathTex):
     """
-    `chanimlib.chem_objects.ChemArrow`
     Chemical Reaction Arrow
     =======================
     Basically a Reaction without any reactants/products.
 
-    May change later.
+    Arguments:
+    ----------
+
+    mode: Arrows - The type of arrow to be used. See :class:`Arrows` for more info on available options.
+
+    length - length of the arrow. Sets `arrow coeff` chemfig property.
+
+    angle - angle made with respect to the x-axis. Sets `arrow angle` chemfig property.
+
+    style - Single string of comma separated TiKZ styling parameters. Sets `arrow style` chemfig property.
+
+    text_up - text to be displayed above the main arrow line.
+
+    text_down - text to be displayed below the main arrow line.
+
+
     """
 
-    # CONFIG = {
-    #     "stroke_width": 2,
-    # }
-
-    arrows = {
-        "forward": "->",
-        "backward": "<-",
-        "eq": "<=>",
-        "eq_fw": "<->>",
-        "eq_bw": "<<->",
-        "double": "<->",
-        "space": "0",
-        "split": "-U>",
-    }
 
     def __init__(
         self,
-        _type="forward",
+        mode=Arrows.forward,
         length=1,
         angle=0,
-        style="{}",
+        style="",
         text_up="",
         text_down="",
         stroke_width=2,
+        tex_template=ChemReactionTemplate,
         **kwargs,
     ):
-        # digest_config(self, kwargs)
-        set_chemfig = """\\setchemfig{atom sep=2em,
-                                      arrow angle={%d},
-                                      arrow coeff={%s},
-                                      arrow style=%s }""" % (
-            angle,
-            length,
-            style,
-        )
-        self.template_tex_file_body = self.template_tex_file_body.replace(
-            "\\setchemfig{atom sep=2em}", f"{set_chemfig}"
-        )
+        self.tex_template: ChemReactionTemplate = tex_template()
 
-        arrow = "\\arrow{%s[%s][%s]}" % (self.arrows[_type], text_up, text_down)
-        MathTex.__init__(self, arrow, stroke_width=stroke_width, **kwargs)
+        self.tex_template.set_chemfig(
+            arrow_angle=angle, arrow_length=length, arrow_style=style
+        )
+        arrow = "\\arrow{%s[%s][%s]}" % (mode.value, text_up, text_down)
+        MathTex.__init__(
+            self,
+            arrow,
+            stroke_width=stroke_width,
+            tex_template=self.tex_template,
+            **kwargs,
+        )
 
 
 class ChemName(MathTex):
