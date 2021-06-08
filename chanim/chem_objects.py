@@ -520,30 +520,6 @@ class ChemArrow(MathTex):
         )
 
 
-class ChemName(MathTex):
-    """`chanimlib.chem_objects.ChemName`
-
-    An attempt to use chemfig's \\chemname{} macro.
-
-    This will only be written in one go, so if you'd like
-    animations for both parts see `ChemWithName`.
-
-    NOTE: To be deprecated. Use `ChemWithName` instead
-    """
-
-    # CONFIG = {"stroke_width": 2}
-
-    def __init__(self, chem, name, buff=1, stroke_width=2, **kwargs):
-        # digest_config(self, kwargs)
-
-        chem_with_name = "\\chemname[%sem]{\\chemfig{%s}}{%s}" % (buff, chem, name)
-        # self.template_tex_file_body = TEMPLATE_CHEM_FILE_BODY.replace(
-        #     "\\chemfig{",
-        #     chem_with_name)
-
-        MathTex.__init__(self, chem_with_name, stroke_width=stroke_width, **kwargs)
-
-
 class ChemWithName(VMobject):
     """
     `chanimlib.chem_objects.ChemWithName`
