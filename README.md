@@ -2,10 +2,13 @@
 This is an extension to 3BlueBrown's [Manim](https://www.github.com/ManimCommunity/manim) library,
 for making videos regarding chemistry.
 
-## Installation
+## Installation (pip)
+`pip install chanim`
+
+## Installation (Source)
 1. Get manim as described [here](https://docs.manim.community/en/latest/installation.html) according to your OS,  or `pip install manim`. You'll have to download other required modules as explained at the manim docs page.
 2. Clone the contents of this repository.
-3. Open a terminal in the cloned directory and run `pip install -e .` (note: requires `pip` to be installed, see how to install for your OS)
+3. Open a terminal in the cloned directory and run `pip install -e .` (note: requires `pip` to be installed, see how to install for your OS), or if you prefer to use [poetry](https://python-poetry.org) instead, `poetry install`.
 
 That's about it. You can now do `from chanim import <*|object_name>` like any regular Python package. 
 
