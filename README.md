@@ -38,7 +38,7 @@ manim -p -qm chem.py ChanimScene
 This'll render your Scene and `p`review it in your default player (in `m`edium `q`uality).
 
 
-![output](https://user-images.githubusercontent.com/65204531/124297601-dcafcf80-db78-11eb-936b-cdc913c91f25.mp4)
+https://user-images.githubusercontent.com/65204531/124297601-dcafcf80-db78-11eb-936b-cdc913c91f25.mp4
 
 
 Congrats! You've written and played your first animation with chanim (or "chanimation" should I say)
