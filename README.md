@@ -2,6 +2,8 @@
 This is an extension to [Manim](https://www.github.com/ManimCommunity/manim) library (initially created by [3Blue1Brown](https://github.com/3b1b/manim)),
 for making videos regarding chemistry.
 
+> A Hindi version of this README is available [here](https://github.com/raghavg123/chanim/blob/master/README-%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80.md).
+
 ## Installation (pip)
 `pip install chanim`
 
@@ -37,8 +39,9 @@ manim -p -qm chem.py ChanimScene
 ```
 This'll render your Scene and `p`review it in your default player (in `m`edium `q`uality).
 
-![output](
-https://user-images.githubusercontent.com/65204531/124297601-dcafcf80-db78-11eb-936b-cdc913c91f25.mp4)
+
+https://user-images.githubusercontent.com/65204531/124297601-dcafcf80-db78-11eb-936b-cdc913c91f25.mp4
+
 
 Congrats! You've written and played your first animation with chanim (or "chanimation" should I say)
 
