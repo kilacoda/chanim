@@ -13,6 +13,7 @@ from manim.mobject.types.vectorized_mobject import VGroup, VMobject
 from manim.mobject.svg.tex_mobject import *
 from manim.animation.animation import Animation
 from manim.animation.creation import Write
+from manim.animation.fading import FadeIn
 from manim.animation.composition import AnimationGroup
 from manim.mobject.geometry import DashedLine
 from manim.constants import *
@@ -423,15 +424,17 @@ class Reaction(Tex):
     def creation_anim(
         self,
         text_anim: Animation = Write,
-        arrow_anim: Animation = FadeInFrom,
+        arrow_anim: Animation = FadeIn,
         reactant_product_simultaneity=False,
-        **kwargs,
+        text_anim_kwargs: dict = None,
+        arrow_anim_kwargs: dict = None,
+        group_anim_kwargs: dict = None,
     ) -> AnimationGroup:
         """Workaround and shortcut method to overcome the bugs in `Write`.
 
         Args:
             text_anim (Animation, optional): The animation on the reactants and products. Defaults to Write.
-            arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeInFrom.
+            arrow_anim (Animation, optional): The animation on the arrow. Defaults to FadeIn.
             reactant_product_simultaneity (bool, optional): Whether to animate the reactants and products together or not.
         Returns:
             AnimationGroup: The group of animations on the text and arrow.
@@ -441,29 +444,30 @@ class Reaction(Tex):
         )
         arrow = self[2 * len(self.reactants) - 1]
 
-        if "text_kwargs" not in kwargs.keys():
-            kwargs["text_kwargs"] = dict()
+        if text_anim_kwargs is None:
+            text_anim_kwargs = dict()
 
-        if "arrow_kwargs" not in kwargs.keys():
-            kwargs["arrow_kwargs"] = dict()
+        if arrow_anim_kwargs is None:
+            arrow_anim_kwargs = dict()
 
-        if "group_kwargs" not in kwargs.keys():
-            kwargs["group_kwargs"] = dict()
-
-        print(kwargs["group_kwargs"])
+        if group_anim_kwargs is None:
+            group_anim_kwargs = dict()
 
         anim_group = (
             AnimationGroup(
-                text_anim(text[0]), text_anim(text[1]), arrow_anim(arrow), **kwargs
+                text_anim(text[0], **text_anim_kwargs),
+                text_anim(text[1], **text_anim_kwargs),
+                arrow_anim(arrow, **arrow_anim_kwargs),
+                **group_anim_kwargs,
             )
             if reactant_product_simultaneity
-            else AnimationGroup(text_anim(text), arrow_anim(arrow), **kwargs)
+            else AnimationGroup(
+                text_anim(text, **text_anim_kwargs),
+                arrow_anim(arrow, **arrow_anim_kwargs),
+                **group_anim_kwargs,
+            )
         )
 
-        try:
-            print(anim_group.run_time)
-        except Exception:
-            pass
         return anim_group
 
 
@@ -490,7 +494,6 @@ class ChemArrow(MathTex):
 
 
     """
-
 
     def __init__(
         self,
@@ -562,9 +565,24 @@ class ChemWithName(VMobject):
         self.submobjects = [self.chem, self.name]
 
     def creation_anim(
-        self, chem_anim: Animation = Write, name_anim: Animation = FadeInFrom
+        self,
+        chem_anim: Animation = Write,
+        name_anim: Animation = FadeIn,
+        chem_anim_kwargs=None,
+        name_anim_kwargs=None,
+        group_anim_kwargs=None,
     ):
-        return AnimationGroup(chem_anim(self.chem), name_anim(self.name))
+        if chem_anim_kwargs is None:
+            chem_anim_kwargs = dict()
+
+        if name_anim_kwargs is None:
+            name_anim_kwargs = dict()
+
+        return AnimationGroup(
+            chem_anim(self.chem, **chem_anim_kwargs),
+            name_anim(self.name, **name_anim_kwargs),
+            **group_anim_kwargs,
+        )
 
 
 class ChemAbove(ChemObject):
