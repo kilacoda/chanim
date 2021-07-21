@@ -11,7 +11,6 @@ from .utils import Arrows
 
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
 from manim.mobject.svg.tex_mobject import *
-from manim.animation.fading import FadeInFrom
 from manim.animation.animation import Animation
 from manim.animation.creation import Write
 from manim.animation.composition import AnimationGroup
