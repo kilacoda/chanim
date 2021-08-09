@@ -540,7 +540,6 @@ class ChemWithName(VMobject):
     inspired by `BraceLabel`
     """
 
-    CONFIG = {"label_constructor": Tex, "buff": 1}
 
     def __init__(
         self, chem, name, name_direction=DOWN, label_constructor=Tex, buff=1, **kwargs
@@ -577,6 +576,9 @@ class ChemWithName(VMobject):
 
         if name_anim_kwargs is None:
             name_anim_kwargs = dict()
+
+        if group_anim_kwargs is None:
+            group_anim_kwargs = dict()
 
         return AnimationGroup(
             chem_anim(self.chem, **chem_anim_kwargs),
