@@ -62,7 +62,7 @@ methine = "-C(-[2]H)"
 
 Phenol = "*6(-=-=(-OH)-=)"
 
-Water = "[5]H-\lewis{1:2:,O}-H[-1]"
+Water = "[5]H-\charge{135 = \:, 225 = \:}{O}-[-1]H"
 
 # Ethanol = PrimaryAlcohol(2)
 
