@@ -19,7 +19,6 @@ from manim.mobject.geometry import DashedLine
 from manim.constants import *
 from manim.mobject.geometry import Dot
 from manim.utils.color import YELLOW
-from manim.opengl import OpenGLMathTex
 from manim._config import logger
 
 
@@ -97,7 +96,7 @@ class ChemObject(MathTex):
         )
 
 
-class OpenGLChemObject(OpenGLMathTex):
+class OpenGLChemObject(MathTex):
     """
     `chanimlib.chem_objects.ChemObject`
 
