@@ -10,14 +10,14 @@ from .templates import ChemReactionTemplate, ChemTemplate
 from .utils import Arrows
 
 from manim.mobject.types.vectorized_mobject import VGroup, VMobject
-from manim.mobject.svg.tex_mobject import *
+from manim.mobject.text.tex_mobject import *
 from manim.animation.animation import Animation
 from manim.animation.creation import Write
 from manim.animation.fading import FadeIn
 from manim.animation.composition import AnimationGroup
-from manim.mobject.geometry import DashedLine
+from manim.mobject.geometry.line import DashedLine
 from manim.constants import *
-from manim.mobject.geometry import Dot
+from manim.mobject.geometry.arc import Dot
 from manim.utils.color import YELLOW
 from manim._config import logger
 
