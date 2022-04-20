@@ -46,7 +46,7 @@ Congrats! You've written and played your first animation with chanim (or "chanim
 Explore the code and docs (coming soon!) for more on how to use chanim.
 
 ## Abilities
-Currently chanim only supports drawing compounds and reactions along with a few chemfig commands (Chemfig is a latex package that can draw chemical molecules such as coordination bonds. The description document website is [here](https://mirrors.ustc.edu.cn/CTAN/macros/generic/chemfig/chemfig-en.pdf)) but more is to come! If you have a suggestion, file an issue with a proper tag.
+Currently chanim only supports drawing compounds and reactions along with a few chemfig commands (Chemfig is a latex package that can draw chemical molecules such as coordination bonds. The description document website is [here](http://ctan.imsc.res.in/macros/generic/chemfig/chemfig-en.pdf)) but more is to come! If you have a suggestion, file an issue with a proper tag.
 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
