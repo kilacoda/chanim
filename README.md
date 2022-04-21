@@ -1,7 +1,7 @@
 # Chanim
 This is an extension to [Manim](https://www.github.com/ManimCommunity/manim) library (initially created by [3Blue1Brown](https://github.com/3b1b/manim)),
 for making videos regarding chemistry.
-> 
+> A Hindi version of this README is available here.
 
 ## Installation (pip)
 `pip install chanim`
