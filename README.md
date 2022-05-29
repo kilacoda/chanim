@@ -1,7 +1,7 @@
 # Chanim
 This is an extension to [Manim](https://www.github.com/ManimCommunity/manim) library (initially created by [3Blue1Brown](https://github.com/3b1b/manim)),
 for making videos regarding chemistry.
-> A Hindi version of this README is available [here](https://github.com/MsHeavyFour/chanim/blob/master/README-हिन्दी.md).
+> A Hindi version of this README is available [here](https://github.com/kilacoda/chanim/blob/master/README-हिन्दी.md).
 
 > A Chinese version of this README is available [here](https://github.com/MsHeavyFour/chanim/blob/master/README-自述文件.md).
 
