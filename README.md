@@ -1,8 +1,9 @@
 # Chanim
 This is an extension to [Manim](https://www.github.com/ManimCommunity/manim) library (initially created by [3Blue1Brown](https://github.com/3b1b/manim)),
 for making videos regarding chemistry.
+> A Hindi version of this README is available [here](https://github.com/kilacoda/chanim/blob/master/README-हिन्दी.md).
 
-> A Hindi version of this README is available [here](https://github.com/raghavg123/chanim/blob/master/README-%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80.md).
+> A Chinese version of this README is available [here](https://github.com/kilacoda/chanim/blob/master/README-自述文件.md).
 
 ## Installation (pip)
 `pip install chanim`
@@ -48,7 +49,7 @@ Congrats! You've written and played your first animation with chanim (or "chanim
 Explore the code and docs (coming soon!) for more on how to use chanim.
 
 ## Abilities
-Currently chanim only supports drawing compounds and reactions along with a few chemfig commands (such as coordinate bonds and complexes etc.) but more is to come! If you have a suggestion, file an issue with a proper tag.
+Currently chanim only supports drawing compounds and reactions along with a few chemfig commands (Chemfig is a latex package that can draw chemical molecules and is used by chanim internally. The documentation is available [here](http://ctan.imsc.res.in/macros/generic/chemfig/chemfig-en.pdf)) but more is to come! If you have a suggestion, file an issue with a proper tag.
 
 ## A Quick Note
 There may be some faulty code and a lot of this may not be well made/documented. Feel free to file an issue if something doesn't work properly.
