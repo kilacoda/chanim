@@ -544,7 +544,7 @@ class ChemWithName(VMobject):
         self, chem, name, name_direction=DOWN, label_constructor=Tex, buff=1, **kwargs
     ):
 
-        super().__init__(self, **kwargs)
+        super().__init__(**kwargs)
 
         if isinstance(
             chem, (ChemObject, ComplexChemIon, ComplexChemCompound, ChemAbove)
@@ -657,6 +657,12 @@ class ReactionVGroup(VGroup):
             if index != 0:
                 iterableable[index].set_y(iterableable[index - 1].get_y())
 
+#Defines TexSymbol for use in the BondBreak class
+class TexSymbol(VMobject):
+                    """
+                    Purely a renaming of VMobjectFromSVGPathstring
+                    """
+                    pass
 
 class BondBreak(DashedLine):
     """
